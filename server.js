@@ -93,6 +93,51 @@ router.route('/testcollection')
         res.json(o);
     }
     );
+    router.route('/movies')
+    .get((req, res) => {
+        // Implementation here
+
+    })
+    .post((req, res) => {
+        // Implementation here
+        router.post('/movies', (req, res) => {
+            if (!req.body.username || !req.body.password) {
+                res.json({success: false, msg: 'Please include both username and password to signup.'})
+            } else {
+                var newUser = {
+                    username: req.body.username,
+                    password: req.body.password
+                };
+        
+                db.save(newUser); //no duplicate checking
+                res.json({success: true, msg: 'Successfully created new user.'})
+            }
+        });
+    })
+    .put(authJwtController.isAuthenticated, (req, res) => {
+        // HTTP PUT Method
+        // Requires JWT authentication.
+        // Returns a JSON object with status, message, headers, query, and env.
+        var o = getJSONObjectForMovieRequirement(req);
+        o.status = 200;
+        o.message = "movie updated";
+        res.json(o);
+    })
+    .delete(authController.isAuthenticated, (req, res) => {
+        // HTTP DELETE Method
+        // Requires Basic authentication.
+        // Returns a JSON object with status, message, headers, query, and env.
+        var o = getJSONObjectForMovieRequirement(req);
+        o.status = 200;
+        o.message = "movie deleted";
+        res.json(o);
+    })
+    .all((req, res) => {
+        // Any other HTTP Method
+        // Returns a message stating that the HTTP method is unsupported.
+        res.status(405).send({ message: 'HTTP method not supported.' });
+    });
+
     
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
